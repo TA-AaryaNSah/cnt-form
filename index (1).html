@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Contact Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-cyan-500 to-blue-500 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center text-blue-600 mb-6">Client Contact Form</h1>
+    <form id="contactForm" class="space-y-4">
+      <input type="text" name="name" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <input type="text" name="contact" placeholder="Mobile or Telegram ID" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <input type="email" name="email" placeholder="Email (optional)" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <select name="type" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <option value="">Select Type</option>
+        <option value="website">Website</option>
+        <option value="app">App</option>
+      </select>
+      <textarea name="summary" placeholder="Short App Summary" required class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      <input type="text" name="budget" placeholder="Budget (Optional)" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">Submit</button>
+    </form>
+    <p id="status" class="text-center text-sm text-gray-600 mt-4"></p>
+  </div>
+  <script>
+const form = document.getElementById('contactForm');
+if (form) {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const statusEl = document.getElementById('status');
+    if (statusEl) statusEl.innerText = 'Sending...';
+
+    const formData = new FormData(this);
+    const name = (formData.get('name') || '').trim();
+    const contact = (formData.get('contact') || '').trim();
+    const email = (formData.get('email') || '').trim();
+    const type = (formData.get('type') || '').trim();
+    const summary = (formData.get('summary') || '').trim();
+    const budget = (formData.get('budget') || '').trim();
+
+    // Validate required fields
+    if (!name || !contact || !type || !summary) {
+      if (statusEl) statusEl.innerText = 'Please fill all required fields!';
+      return;
+    }
+
+    // Format timestamp
+    const now = new Date();
+    const timestamp = now.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      hour12: true,
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    // Message for Telegram
+    const message = `📩 *New Client Submission*  
+🕒 Date & Time: ${timestamp}  
+👤 Name: ${name}  
+📞 Contact: ${contact}  
+📧 Email: ${email || 'N/A'}  
+📦 Type: ${type}  
+📝 Summary: ${summary}  
+💰 Budget: ${budget || 'N/A'}`;
+
+    // Bot Credentials
+    const botToken = '7656786173:AAEp9P7Vk42mYT9BBTiFaiHWkh_9JLDp5NY';
+    const chatId = '-1002773701533';
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    // Send message to Telegram
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: "Markdown"
+      })
+    })
+    .then(res => res.json())
+    .then(response => {
+      if (response.ok) {
+        window.location.href = `confirmation.html?name=${encodeURIComponent(name)}`;
+      } else {
+        if (statusEl) statusEl.innerText = '❌ Failed to send. Try again.';
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      if (statusEl) statusEl.innerText = '❌ Error submitting form.';
+    });
+  });
+}
+</script>
+</body>
+</html>

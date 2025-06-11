@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thank You</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-cyan-500 to-blue-700 min-h-screen flex items-center justify-center text-white text-center">
+  <div class="p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-lg max-w-md">
+    <div class="mx-auto mb-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
+      <!-- Checkmark SVG -->
+      <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+    <h1 class="text-3xl font-bold mb-2">Submission Successful</h1>
+    <p class="text-lg mb-4">Thank you, <span id="userName" class="font-semibold"></span>!  
+      Our team will contact you shortly.</p>
+    <button onclick="window.location.href='index.html'" class="mt-3 px-5 py-2 rounded bg-white text-blue-600 font-semibold hover:bg-gray-200 transition">Back to Home</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get("name");
+    if (!name) {
+      window.location.href = "index.html"; // Prevent access without form
+    } else {
+      document.getElementById("userName").textContent = decodeURIComponent(name);
+    }
+  </script>
+</body>
+</html>
